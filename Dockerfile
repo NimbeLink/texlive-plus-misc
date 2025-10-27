@@ -20,8 +20,8 @@ RUN <<EOF
 wget -q https://github.com/jgraph/drawio-desktop/releases/download/v28.2.5/drawio-amd64-28.2.5.deb
 
 apt-get update
-apt-get install -y /opt/drawio-desktop/drawio-amd64-28.2.5.deb
-rm /opt/drawio-desktop/drawio-amd64-28.2.5.deb
+apt-get install -y ./drawio-amd64-28.2.5.deb
+rm drawio-amd64-28.2.5.deb
 
 # Additional Fonts
 apt-get install -y fonts-liberation \
