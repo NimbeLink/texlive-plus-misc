@@ -1,9 +1,7 @@
 # Based on docs in https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images
 name: Public Docker Image
 
-on:
-  release:
-    types: [published]
+on: push
 
 jobs:
   push_to_registries:
