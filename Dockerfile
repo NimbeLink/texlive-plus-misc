@@ -1,43 +1,71 @@
-FROM texlive/texlive:TL2024-historic
+FROM node:25-trixie
 
-WORKDIR /doc
+# Install mermaid CLI
+RUN npm install -g @mermaid-js/mermaid-cli
 
-RUN apt-get update && apt-get install -y dumb-init \
-    curl git python3-venv build-essential plantuml librsvg2-bin openssh-client \
-    graphviz libenchant-2-dev libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-    libsqlite3-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
-    libffi-dev liblzma-dev python3-poetry python3-pip \
-    xvfb wget libgbm1 libasound2 npm inkscape \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /src/*.deb
+# Install packages Sphinx installs
+# (see https://github.com/sphinx-doc/sphinx-docker-images/blob/master/latexpdf/Dockerfile)
+RUN apt-get update && apt-get install -y \
+      graphviz \
+      imagemagick \
+      make \
+      \
+      latexmk \
+      lmodern \
+      fonts-freefont-otf \
+      texlive-latex-recommended \
+      texlive-latex-extra \
+      texlive-fonts-recommended \
+      texlive-luatex \
+      texlive-xetex \
+      xindy \
+      tex-gyre \
+  && apt-get autoremove \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN python -m venv /venv
+# Install packages we utilize internally
+RUN apt-get update && apt-get install -y \
+      dumb-init \
+      python3-poetry \
+      git \
+      curl \
+      python3-venv \
+      plantuml \
+      librsvg2-bin \
+      openssh-client \
+      graphviz \
+      libenchant-2-dev \
+      xvfb \
+      libgbm1 \
+      libasound2 \
+      inkscape \
+      fonts-montserrat \
+    && apt-get autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR "/root"
-
+# Install DrawIO
 RUN <<EOF
 
-wget -q https://github.com/jgraph/drawio-desktop/releases/download/v28.2.5/drawio-amd64-28.2.5.deb
+set -e
+
+curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v27.0.9/drawio-amd64-27.0.9.deb
 
 apt-get update
-apt-get install -y ./drawio-amd64-28.2.5.deb
-rm drawio-amd64-28.2.5.deb
-
-# Additional Fonts
-apt-get install -y fonts-liberation \
-  fonts-arphic-ukai fonts-arphic-uming \
-  fonts-noto fonts-noto-cjk \
-  fonts-ipafont-mincho fonts-ipafont-gothic \
-  fonts-unfonts-core \
-  fonts-montserrat
+apt-get install -y ./drawio-amd64-27.0.9.deb
+rm drawio-amd64-27.0.9.deb
 
 rm -rf /var/lib/apt/lists/*
 rm -rf /src/*.deb
 chmod a+w .
 
-npm install -g @mermaid-js/mermaid-cli
 EOF
 
+# Create Python Virtual Environment
+RUN python3 -m venv /venv
+
+# Setup
 ENV ELECTRON_DISABLE_SECURITY_WARNINGS="true" \
     ELECTRON_ENABLE_LOGGING="false" \
     ELECTRON_DISABLE_SANDBOX=1 \
@@ -51,5 +79,4 @@ ENV ELECTRON_DISABLE_SECURITY_WARNINGS="true" \
     XVFB_OPTIONS="-nolisten unix" \
     SCRIPT_DEBUG_MODE="false"
 
-WORKDIR /doc
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
