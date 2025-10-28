@@ -3,7 +3,7 @@ FROM node:25-trixie
 # Install mermaid CLI
 RUN npm install -g @mermaid-js/mermaid-cli
 
-# Install packages Sphinx installs
+# Install packages Sphinx installs, plus internally used packages
 # (see https://github.com/sphinx-doc/sphinx-docker-images/blob/master/latexpdf/Dockerfile)
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       graphviz \
@@ -20,12 +20,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       texlive-xetex \
       xindy \
       tex-gyre \
-  && apt-get autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-# Install packages we utilize internally
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      \
       dumb-init \
       python3-poetry \
       git \
@@ -41,9 +36,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libasound2 \
       inkscape \
       fonts-montserrat \
-    && apt-get autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get autoremove \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install DrawIO
 RUN <<EOF
