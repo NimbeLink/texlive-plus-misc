@@ -1,7 +1,7 @@
 FROM node:25-trixie
 
-# Install mermaid CLI
-RUN npm install -g @mermaid-js/mermaid-cli
+# Install mermaid CLI and Wavedrom-cli
+RUN npm install -g @mermaid-js/mermaid-cli wavedrom-cli
 
 RUN <<EOF
   set -e
