@@ -5,7 +5,7 @@ RUN npm install -g @mermaid-js/mermaid-cli
 
 # Install packages Sphinx installs
 # (see https://github.com/sphinx-doc/sphinx-docker-images/blob/master/latexpdf/Dockerfile)
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       graphviz \
       imagemagick \
       make \
@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Install packages we utilize internally
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       dumb-init \
       python3-poetry \
       git \
@@ -53,7 +53,7 @@ set -e
 curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v27.0.9/drawio-amd64-27.0.9.deb
 
 apt-get update
-apt-get install -y ./drawio-amd64-27.0.9.deb
+DEBIAN_FRONTEND=noninteractive apt-get install -y ./drawio-amd64-27.0.9.deb
 rm drawio-amd64-27.0.9.deb
 
 rm -rf /var/lib/apt/lists/*
