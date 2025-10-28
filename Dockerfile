@@ -3,9 +3,15 @@ FROM node:25-trixie
 # Install mermaid CLI
 RUN npm install -g @mermaid-js/mermaid-cli
 
-# Install packages Sphinx installs, plus internally used packages
-# (see https://github.com/sphinx-doc/sphinx-docker-images/blob/master/latexpdf/Dockerfile)
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN <<EOF
+  set -e
+
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update
+
+  # Install packages Sphinx installs, plus internally used packages
+  # (see https://github.com/sphinx-doc/sphinx-docker-images/blob/master/latexpdf/Dockerfile)
+  apt-get install -y \
       graphviz \
       imagemagick \
       make \
@@ -19,8 +25,10 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       texlive-luatex \
       texlive-xetex \
       xindy \
-      tex-gyre \
-      \
+      tex-gyre
+
+  # Install packages used internally
+  apt-get install -y \
       dumb-init \
       python3-poetry \
       git \
@@ -35,26 +43,20 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libgbm1 \
       libasound2 \
       inkscape \
-      fonts-montserrat \
-  && apt-get autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+      fonts-montserrat
 
-# Install DrawIO
-RUN <<EOF
+  # Install package required by mermaid-cli
+  apt-get install -y chromium
 
-set -e
+  # Install DrawIO
+  curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v27.0.9/drawio-amd64-27.0.9.deb
+  apt-get install -y ./drawio-amd64-27.0.9.deb
+  rm drawio-amd64-27.0.9.deb
 
-curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v27.0.9/drawio-amd64-27.0.9.deb
-
-apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y ./drawio-amd64-27.0.9.deb
-rm drawio-amd64-27.0.9.deb
-
-rm -rf /var/lib/apt/lists/*
-rm -rf /src/*.deb
-chmod a+w .
-
+  # Clean up Apt
+  apt-get autoremove
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
 EOF
 
 # Create Python Virtual Environment
