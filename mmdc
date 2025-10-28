@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec node /usr/local/lib/node_modules/\@mermaid-js/mermaid-cli/src/cli.js -p /.puppeteerrc.json "${@}"

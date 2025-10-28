@@ -65,6 +65,12 @@ EOF
 # Create Python Virtual Environment
 RUN python3 -m venv /venv
 
+# Wrap mmdc to pass in a puppeteer configuration to pass --no-sandbox to
+# Chrome since it's being run in Docker.
+ADD puppeteer-config.json /.puppeteerrc.json
+RUN rm /usr/local/bin/mmdc
+ADD mmdc /usr/local/bin/mmdc
+
 # Setup
 ENV ELECTRON_DISABLE_SECURITY_WARNINGS="true" \
     ELECTRON_ENABLE_LOGGING="false" \
