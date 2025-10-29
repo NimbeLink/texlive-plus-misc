@@ -80,6 +80,12 @@ ENV ELECTRON_DISABLE_SECURITY_WARNINGS="true" \
     DISPLAY=":42" \
     XVFB_DISPLAY=":42" \
     XVFB_OPTIONS="-nolisten unix" \
-    SCRIPT_DEBUG_MODE="false"
+    SCRIPT_DEBUG_MODE="false" \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=0 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
+WORKDIR /doc
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
